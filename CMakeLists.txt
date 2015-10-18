@@ -10,6 +10,10 @@ link_directories(${GTK3_LIBRARY_DIRS})
 
 add_definitions(${GTK3_CFLAGS_OTHER})
 
-add_executable(gtk3shot main.c)
+add_executable(gtk3shot
+    main.c
+    gtk3shot.c
+    gtk3shotwin.c
+    )
 
 target_link_libraries(gtk3shot ${GTK3_LIBRARIES})
