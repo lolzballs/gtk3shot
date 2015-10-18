@@ -17,12 +17,10 @@ G_DEFINE_TYPE(Gtk3ShotWindow, gtk3shot_window, GTK_TYPE_APPLICATION_WINDOW);
 
 static void gtk3shot_window_init(Gtk3ShotWindow* app)
 {
-    
 }
 
 static void gtk3shot_window_class_init(Gtk3ShotWindowClass* class)
 {
-    
 }
 
 Gtk3ShotWindow* gtk3shot_window_new(Gtk3Shot* app)

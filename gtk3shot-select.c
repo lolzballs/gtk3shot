@@ -19,7 +19,6 @@ static gboolean select_area_key_press(GtkWidget* window, GdkEventKey* event, sel
         data->rect.width = 0;
         data->rect.height = 0;
 
-        g_print("Escape\n");
         gtk_main_quit();
     }
 
@@ -117,31 +116,22 @@ static gboolean select_area_motion_notify(GtkWidget* window, GdkEventMotion* eve
     return TRUE;
 }
 
-static gboolean select_window_draw(GtkWidget* window, cairo_t* cr)
+static gboolean select_window_draw(GtkWidget* window, cairo_t* cr, select_area_data* data)
 {
-    GtkStyleContext* style;
-
-    style = gtk_widget_get_style_context(window);
-
     if (gtk_widget_get_app_paintable(window))
     {
         cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
         cairo_set_source_rgba(cr, 0, 0, 0, 0);
+
+        gdk_cairo_rectangle(cr, &data->rect);
+
         cairo_paint(cr);
-
-        gtk_style_context_save(style);
-        gtk_style_context_add_class(style, GTK_STYLE_CLASS_RUBBERBAND);
-
-        gtk_render_background(style, cr, 0, 0,
-                              gtk_widget_get_allocated_width(window),
-                              gtk_widget_get_allocated_height(window));
-        gtk_style_context_restore(style);
     }
 
     return TRUE;
 }
 
-static GtkWidget* create_select_window(void)
+static GtkWidget* create_select_window(select_area_data* data)
 {
     GtkWidget* window;
     GdkScreen* screen;
@@ -157,7 +147,7 @@ static GtkWidget* create_select_window(void)
         gtk_widget_set_app_paintable(window, TRUE);
     }
 
-    g_signal_connect(window, "draw", G_CALLBACK(select_window_draw), NULL);
+    g_signal_connect(window, "draw", G_CALLBACK(select_window_draw), data);
 
     gtk_window_move(GTK_WINDOW(window), -100, -100);
     gtk_window_resize(GTK_WINDOW(window), 10, 10);
@@ -180,7 +170,7 @@ GdkRectangle gtk3shot_select_area(void)
     data.rect.height = 0;
     data.button_pressed = FALSE;
     data.aborted = FALSE;
-    data.window = create_select_window();
+    data.window = create_select_window(&data);
 
     g_signal_connect(data.window, "key-press-event", G_CALLBACK(select_area_key_press), &data);
     g_signal_connect(data.window, "button-press-event", G_CALLBACK(select_area_button_press), &data);
