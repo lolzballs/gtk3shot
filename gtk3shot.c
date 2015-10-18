@@ -2,6 +2,7 @@
 
 #include "gtk3shot.h"
 #include "gtk3shotwin.h"
+#include "gtk3shot-select.h"
 
 struct _Gtk3Shot
 {
@@ -15,40 +16,41 @@ struct _Gtk3ShotClass
 
 G_DEFINE_TYPE(Gtk3Shot, gtk3shot, GTK_TYPE_APPLICATION);
 
-static GdkPixbuf* gtk3shot_take_screenshot()
+static GdkPixbuf* gtk3shot_take_screenshot(GdkRectangle rectangle)
 {
     GdkPixbuf* screenshot;
     GdkWindow* root_window;
 
-    gint x, y;
-    gint w, h;
-
     root_window = gdk_get_default_root_window();
-    w = gdk_window_get_width(root_window);
-    h = gdk_window_get_height(root_window);
-    gdk_window_get_origin(root_window, &x, &y);
-
-    screenshot = gdk_pixbuf_get_from_window(root_window, x, y, w, h);
+    screenshot = gdk_pixbuf_get_from_window(root_window, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 
     return screenshot;
 }
 
+static void gtk3shot_open_preview(GApplication* app, GdkPixbuf* screenshot)
+{
+    Gtk3ShotWindow* win;
+
+    win = gtk3shot_window_new(GTK3SHOT(app));
+    gtk3shot_window_open(win, screenshot);
+    gtk_window_present(GTK_WINDOW(win));
+}
+
 static void gtk3shot_init(Gtk3Shot* app)
 {
-    
 }
 
 static void gtk3shot_activate(GApplication* app)
 {
-    Gtk3ShotWindow* win;
     GdkPixbuf* screenshot;
+    GdkRectangle select_area;
 
-    win = gtk3shot_window_new(GTK3SHOT(app));
-    screenshot = gtk3shot_take_screenshot();
+    select_area = gtk3shot_select_area();
+    screenshot = gtk3shot_take_screenshot(select_area);
 
-    gtk3shot_window_open(win, screenshot);
+    g_debug("w: %d, h: %d, x: %d, y: %d\n", select_area.width, select_area.height, select_area.x, select_area.y);
 
-    gtk_window_present(GTK_WINDOW(win));
+    gtk3shot_open_preview(app, screenshot);
 }
 
 static void gtk3shot_class_init(Gtk3ShotClass* class)

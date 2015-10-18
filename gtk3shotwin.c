@@ -38,6 +38,4 @@ void gtk3shot_window_open(Gtk3ShotWindow* win, GdkPixbuf* screenshot)
 
     gtk_widget_show(image);
     gtk_container_add(GTK_CONTAINER(win), image);
-
-    gtk_window_fullscreen(GTK_WINDOW(win));
 }

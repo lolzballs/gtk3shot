@@ -14,6 +14,7 @@ add_executable(gtk3shot
     main.c
     gtk3shot.c
     gtk3shotwin.c
+    gtk3shot-select.c
     )
 
 target_link_libraries(gtk3shot ${GTK3_LIBRARIES})
