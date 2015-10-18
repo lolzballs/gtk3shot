@@ -120,12 +120,14 @@ static gboolean select_window_draw(GtkWidget* window, cairo_t* cr, select_area_d
 {
     if (gtk_widget_get_app_paintable(window))
     {
-        cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-        cairo_set_source_rgba(cr, 0, 0, 0, 0);
+        GdkWindow* gdkwindow;
 
-        gdk_cairo_rectangle(cr, &data->rect);
+        gdkwindow = gtk_widget_get_window(window);
 
-        cairo_paint(cr);
+        g_print("hello\n");
+        cairo_rectangle(cr, 0, 0, gdk_window_get_width(gdkwindow), gdk_window_get_height(gdkwindow));
+        cairo_set_source_rgba(cr, 1, 0, 0, 1);
+        cairo_stroke(cr);
     }
 
     return TRUE;
